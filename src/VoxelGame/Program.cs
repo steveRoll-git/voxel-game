@@ -35,22 +35,22 @@ internal static class Program
             new(VertexAttribute.TexCoords, 2)
         );
 
-        mesh = new Mesh(vertexFormat, [
-            0.5f, 0.5f, 0.0f, 0, 0,
-            0.5f, -0.5f, 0.0f, 0, 1,
-            -0.5f, -0.5f, 0.0f, 1, 1,
-            -0.5f, 0.5f, 0.0f, 1, 0,
-        ], [
+        mesh = new Mesh(vertexFormat, new float[,] {
+            { 0.5f, 0.5f, 0.0f, 0, 0 },
+            { 0.5f, -0.5f, 0.0f, 0, 1 },
+            { -0.5f, -0.5f, 0.0f, 1, 1 },
+            { -0.5f, 0.5f, 0.0f, 1, 0 },
+        }, [
             0u, 1u, 3u,
             1u, 2u, 3u
         ]);
 
-        mesh2 = new Mesh(vertexFormat, [
-            0.7f, 0.5f, 0.0f, 0, 0,
-            0.7f, -0.5f, 0.0f, 0, 1,
-            -0.3f, -0.5f, 0.0f, 1, 1,
-            -0.3f, 0.5f, 0.0f, 1, 0,
-        ], [
+        mesh2 = new Mesh(vertexFormat, new float[,] {
+            { 0.7f, 0.5f, 0.0f, 0, 0 },
+            { 0.7f, -0.5f, 0.0f, 0, 1 },
+            { -0.3f, -0.5f, 0.0f, 1, 1 },
+            { -0.3f, 0.5f, 0.0f, 1, 0 },
+        }, [
             0u, 1u, 3u,
             1u, 2u, 3u
         ]);

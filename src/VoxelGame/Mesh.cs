@@ -15,13 +15,20 @@ internal class Mesh
     private readonly uint vbo;
     private readonly uint ebo;
 
-    public Mesh(VertexFormat vertexFormat, float[] vertices, uint[] indices)
+    private readonly uint vertexCount;
+
+    public Mesh(VertexFormat vertexFormat, float[,] vertices, uint[] indices)
     {
         vao = gl.GenVertexArray();
         gl.BindVertexArray(vao);
 
         vbo = gl.GenBuffer();
         gl.BindBuffer(BufferTargetARB.ArrayBuffer, vbo);
+
+        if (vertices.GetLength(1) != vertexFormat.numComponents)
+        {
+            throw new Exception("Number of components in vertex array doesn't match the vertex format");
+        }
 
         unsafe
         {
@@ -46,10 +53,12 @@ internal class Mesh
             gl.EnableVertexAttribArray(location);
             unsafe
             {
-                gl.VertexAttribPointer(location, attribute.Size, VertexAttribPointerType.Float, false, vertexFormat.stride, (void*)offset);
+                gl.VertexAttribPointer(location, attribute.Size, VertexAttribPointerType.Float, false, vertexFormat.Stride, (void*)offset);
             }
             offset += attribute.Size * sizeof(float);
         }
+
+        vertexCount = (uint)indices.Length;
 
         gl.BindVertexArray(0);
         gl.BindBuffer(BufferTargetARB.ArrayBuffer, 0);
@@ -61,7 +70,7 @@ internal class Mesh
         gl.BindVertexArray(vao);
         unsafe
         {
-            gl.DrawElements(PrimitiveType.Triangles, 6, DrawElementsType.UnsignedInt, (void*)0);
+            gl.DrawElements(PrimitiveType.Triangles, vertexCount, DrawElementsType.UnsignedInt, (void*)0);
         }
     }
 }
