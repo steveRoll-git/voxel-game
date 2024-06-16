@@ -31,6 +31,7 @@ internal static class Program
     private static unsafe void OnLoad()
     {
         gl.ClearColor(System.Drawing.Color.CornflowerBlue);
+        gl.Enable(EnableCap.DepthTest);
 
         var vertexFormat = new VertexFormat(
             new(VertexAttribute.Position, 3),
@@ -69,7 +70,7 @@ internal static class Program
 
     private static unsafe void OnRender(double deltaTime)
     {
-        gl.Clear(ClearBufferMask.ColorBufferBit);
+        gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
         shader.Use();
         mesh.Draw(Matrix4x4.CreateRotationZ(time) * Matrix4x4.CreateRotationY(time / 2));
