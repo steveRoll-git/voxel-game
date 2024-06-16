@@ -14,7 +14,10 @@ internal static class Program
 
     private static Shader shader;
 
-    private static float x;
+    private static float time;
+
+    private static Matrix4x4 viewMatrix;
+    private static Matrix4x4 projectionMatrix;
 
     public static void Main(string[] args)
     {
@@ -35,21 +38,33 @@ internal static class Program
         );
 
         mesh = new Mesh(vertexFormat, new float[,] {
-            { 0.5f, 0.5f, 0.0f, 0, 0 },
-            { 0.5f, -0.5f, 0.0f, 0, 1 },
-            { -0.5f, -0.5f, 0.0f, 1, 1 },
-            { -0.5f, 0.5f, 0.0f, 1, 0 },
+            { 0.5f, 0.5f, -0.5f, 0, 0 },
+            { 0.5f, -0.5f, -0.5f, 0, 1 },
+            { -0.5f, -0.5f, -0.5f, 1, 1 },
+            { -0.5f, 0.5f, -0.5f, 1, 0 },
+            { 0.5f, 0.5f, 0.5f, 0, 0 },
+            { 0.5f, -0.5f, 0.5f, 0, 1 },
+            { -0.5f, -0.5f, 0.5f, 1, 1 },
+            { -0.5f, 0.5f, 0.5f, 1, 0 },
         }, [
-            0u, 1u, 3u,
-            1u, 2u, 3u
+            0, 1, 3,
+            1, 2, 3,
+            4, 5, 7,
+            5, 6, 7,
         ]);
 
         shader = new Shader(ReadResource("shaders.default.vert"), ReadResource("shaders.default.frag"));
+
+        viewMatrix = Matrix4x4.CreateTranslation(0, 0, -2);
+        projectionMatrix = Matrix4x4.CreatePerspectiveFieldOfView(MathF.PI / 2, (float)window.Size.X / window.Size.Y, 0.1f, 100);
+
+        shader.SendMat4("projection", projectionMatrix);
+        shader.SendMat4("view", viewMatrix);
     }
 
     private static void OnUpdate(double deltaTime)
     {
-        x += (float)deltaTime * 0.1f;
+        time += (float)deltaTime;
     }
 
     private static unsafe void OnRender(double deltaTime)
@@ -57,7 +72,7 @@ internal static class Program
         gl.Clear(ClearBufferMask.ColorBufferBit);
 
         shader.Use();
-        mesh.Draw(Matrix4x4.CreateTranslation(x, 0, 0));
+        mesh.Draw(Matrix4x4.CreateRotationZ(time) * Matrix4x4.CreateRotationY(time / 2));
     }
 
     private static void KeyDown(IKeyboard keyboard, Key key, int keyCode)
