@@ -1,9 +1,6 @@
 ﻿using Silk.NET.OpenGL;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Numerics;
 
 namespace VoxelGame;
 
@@ -12,6 +9,8 @@ using static Graphics;
 internal class Shader
 {
     private readonly uint programHandle;
+
+    public static Shader CurrentShader { get; private set; }
 
     public Shader(string vertexCode, string fragmentCode)
     {
@@ -54,7 +53,22 @@ internal class Shader
 
     public void Use()
     {
+        if (CurrentShader == this)
+        {
+            return;
+        }
         gl.UseProgram(programHandle);
+        CurrentShader = this;
+    }
+
+    public void SendMat4(string uniform, Matrix4x4 mat4)
+    {
+        Use();
+        var location = gl.GetUniformLocation(programHandle, uniform);
+        unsafe
+        {
+            gl.UniformMatrix4(location, 1, false, (float*)&mat4);
+        }
     }
 
     public static string PreprocessShaderCode(string code)

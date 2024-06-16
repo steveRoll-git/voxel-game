@@ -1,9 +1,7 @@
 ﻿using Silk.NET.Input;
-using Silk.NET.Maths;
 using Silk.NET.OpenGL;
 using Silk.NET.Windowing;
-using System.Drawing;
-using System.Reflection;
+using System.Numerics;
 
 namespace VoxelGame;
 
@@ -13,9 +11,10 @@ using static ResourceUtils;
 internal static class Program
 {
     private static Mesh mesh;
-    private static Mesh mesh2;
 
     private static Shader shader;
+
+    private static float x;
 
     public static void Main(string[] args)
     {
@@ -28,7 +27,7 @@ internal static class Program
 
     private static unsafe void OnLoad()
     {
-        gl.ClearColor(Color.CornflowerBlue);
+        gl.ClearColor(System.Drawing.Color.CornflowerBlue);
 
         var vertexFormat = new VertexFormat(
             new(VertexAttribute.Position, 3),
@@ -45,21 +44,12 @@ internal static class Program
             1u, 2u, 3u
         ]);
 
-        mesh2 = new Mesh(vertexFormat, new float[,] {
-            { 0.7f, 0.5f, 0.0f, 0, 0 },
-            { 0.7f, -0.5f, 0.0f, 0, 1 },
-            { -0.3f, -0.5f, 0.0f, 1, 1 },
-            { -0.3f, 0.5f, 0.0f, 1, 0 },
-        }, [
-            0u, 1u, 3u,
-            1u, 2u, 3u
-        ]);
-
         shader = new Shader(ReadResource("shaders.default.vert"), ReadResource("shaders.default.frag"));
     }
 
     private static void OnUpdate(double deltaTime)
     {
+        x += (float)deltaTime * 0.1f;
     }
 
     private static unsafe void OnRender(double deltaTime)
@@ -67,8 +57,7 @@ internal static class Program
         gl.Clear(ClearBufferMask.ColorBufferBit);
 
         shader.Use();
-        mesh.Draw();
-        mesh2.Draw();
+        mesh.Draw(Matrix4x4.CreateTranslation(x, 0, 0));
     }
 
     private static void KeyDown(IKeyboard keyboard, Key key, int keyCode)

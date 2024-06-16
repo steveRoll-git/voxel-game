@@ -1,9 +1,5 @@
 ﻿using Silk.NET.OpenGL;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Numerics;
 
 namespace VoxelGame;
 
@@ -67,7 +63,13 @@ internal class Mesh
 
     public void Draw()
     {
+        Draw(Matrix4x4.Identity);
+    }
+
+    public void Draw(Matrix4x4 transform)
+    {
         gl.BindVertexArray(vao);
+        Shader.CurrentShader.SendMat4("transform", transform);
         unsafe
         {
             gl.DrawElements(PrimitiveType.Triangles, vertexCount, DrawElementsType.UnsignedInt, (void*)0);
